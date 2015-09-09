@@ -17,7 +17,7 @@ int board[8][8] =
     { -1, -1, -1, -1, -1, -1, -1, -1 }
 };
 
-const int piece[][5][5] =
+int piece[][5][5] =
 {
     // Tetromino 0: no rotations, no flip
     // ##
@@ -525,13 +525,58 @@ int pieceCol[13] =              { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 int lastPiece = -1;
 int solutionCount = 0;
 
+const int MAGIC_NUMBER = 100;
+const int b = 0; // black
+const int w = 1; // white
+// blackness or whiteness of most top left corner of piece
+const int bw[] = {
+    b, // #
+    b, // X
+    b,b, // I
+    b,b,b,b, // Z
+    w,w,w,w, // V
+    b,b,b,b, // W
+    w,w,w,w, // T
+    w,b,b,w, // U
+    b,b,b,b,b,b,b,b, // F
+    b,w,b,w,b,w,b,w, // L
+    w,b,w,b,w,b,w,b, // Y
+    w,b,w,b,w,b,w,b, // N
+    b,w,w,b,b,w,w,b, // P
+};
+
+void colorizePieces(){
+    for (int i = 0; i < 64; ++i)
+        for (int r = 0; r < 5; ++r)
+            for (int c = 0; c < 5; ++c)
+                if(piece[i][r][c] != -1 && bw[i] == (r+c)%2)
+                    piece[i][r][c] += MAGIC_NUMBER;
+}
+
+// check if board contains propper chess board
+bool isChess(){
+    int ccolor = board[7][7] >= MAGIC_NUMBER ? b : w; // bottom right corn color 
+    for (int r = 0; r < 8; ++r) {
+        for (int c = 0; c < 8; ++c) {
+            if ((r+c)%2 == 0) { // even
+                if ((board[r][c] >= MAGIC_NUMBER ? b : w) != ccolor)
+                    return false;
+            } else { // odd
+                if ((board[r][c] >= MAGIC_NUMBER ? b : w) != !ccolor)
+                    return false;
+            }
+        }
+    }
+    return true;
+}
+
 void printBoard()
 {
     for (int row = 0; row != 8; ++row)
     {
         for (int col = 0; col != 8; ++col)
         {
-            std::cout << std::setw(3) << board[row][col];
+            std::cout << " " <<  "#XIZVWTUFLYNP"[(board[row][col] % MAGIC_NUMBER)];
         }
         std::cout << '\n';
     }
@@ -694,9 +739,11 @@ void solvePiece(int row, int col, int orient)
 
     if (lastPiece == 12)
     {
-        ++solutionCount;
-        printSolution();
-        printBoard();
+        if(isChess()){
+            ++solutionCount;
+            printSolution();
+            printBoard();
+        }
     }
     else
     {
@@ -806,6 +853,8 @@ void solveSquare(int row, int col)
 int main(int argc, char* argv[])
 {
     std::cout << "Pentomino solver\n";
+
+    colorizePieces();
 
     std::time_t time1;
     std::time(&time1);
