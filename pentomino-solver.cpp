@@ -558,6 +558,8 @@ bool isChess(){
     int ccolor = board[7][7] >= MAGIC_NUMBER ? b : w; // bottom right corn color 
     for (int r = 0; r < 8; ++r) {
         for (int c = 0; c < 8; ++c) {
+            if (board[r][c] % MAGIC_NUMBER == 0) // square may be wrongly rotated
+                continue;
             if ((r+c)%2 == 0) { // even
                 if ((board[r][c] >= MAGIC_NUMBER ? b : w) != ccolor)
                     return false;
