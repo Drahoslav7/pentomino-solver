@@ -13,8 +13,7 @@ const bool CENTER_SQUARE = ENV(CENTER_SQUARE); // only find solutions with squar
 const bool CHESS_PATTERN = ENV(CHESS_PATTERN); // only find solutions for pieces with chess patern
 const bool COLOR_OUTPUT = ENV(COLOR_OUTPUT); // output colored board insted of letters
 const bool SHOW_TRIES = ENV(SHOW_TRIES); // output all failure points as well
-const int  HIDE = getenv("HIDE") != NULL ? *getenv("HIDE")-'0' : 0; // hide n (0-9) randomly choosen pieces - for fun
-
+const int  HIDE = getenv("HIDE") != NULL ? atoi(getenv("HIDE")) : 0; // hide n (0-9) randomly choosen pieces - for fun
 
 const int8_t _ = -1; // empty square V
 
