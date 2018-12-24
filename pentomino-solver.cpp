@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <ctime>
 #include <cstdint>
+#include <ctime>
 
 #define ENV(VAR) (getenv(#VAR) && *getenv(#VAR) == '1')
 
@@ -12,6 +13,7 @@ const bool CENTER_SQUARE = ENV(CENTER_SQUARE); // only find solutions with squar
 const bool CHESS_PATTERN = ENV(CHESS_PATTERN); // only find solutions for pieces with chess patern
 const bool COLOR_OUTPUT = ENV(COLOR_OUTPUT); // output colored board insted of letters
 const bool SHOW_TRIES = ENV(SHOW_TRIES); // output all failure points as well
+const int  HIDE = getenv("HIDE") != NULL ? *getenv("HIDE")-'0' : 0; // hide n (0-9) randomly choosen pieces - for fun
 
 
 const int8_t _ = -1; // empty square V
@@ -600,9 +602,21 @@ bool isChess() {
 }
 
 void printBoard() {
+    bool hide[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int n = 0;
+    while (n < HIDE) {
+        int i = rand() % 13;
+        if (!hide[i]) {
+            hide[i] = true;
+            ++n;
+        }
+    }
+    
+    std::cout << "╔════════════════╗" << "\n";
     for (int row = 0; row != 8; ++row) {
+        std::cout << "║";
         for (int col = 0; col != 8; ++col) {
-            if (board[row][col] == _){
+            if (board[row][col] == _ || hide[board[row][col] % MAGIC_NUMBER]){
                 std::cout << "  ";
                 continue;
             }
@@ -618,8 +632,9 @@ void printBoard() {
                 std::cout << " " <<  pieceName[board[row][col] % MAGIC_NUMBER];
             }
         }
-        std::cout << '\n';
+        std::cout << "║\n";
     }
+    std::cout << "╚════════════════╝";
     std::cout << std::endl;
 }
 
@@ -852,6 +867,9 @@ int main() {
     std::time_t time1;
     std::time(&time1);
 
+    if (HIDE) {
+        srand(time(NULL));
+    }
 
     if (CENTER_SQUARE) {
         // Solve square in centre only.

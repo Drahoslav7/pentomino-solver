@@ -10,6 +10,7 @@ following environment variables accepted:
   - `CHESS_PATTERN=1` - only find solutions for pieces with chess patern
   - `COLOR_OUTPUT=1` - output colored board insted of letters
   - `SHOW_TRIES=1` - output failure points as well
+  - `HIDE=n` - hides n randomly choosen pieces in output (for gaming purposes)
 
 
 ![example of output](pentomino-outputs.png)
